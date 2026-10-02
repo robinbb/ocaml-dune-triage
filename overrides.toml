@@ -1,4 +1,4 @@
-# Your own calls about specific issues. The tool never contradicts these.
+# Manual calls about specific issues. The tool never contradicts these.
 #
 #   status = "skip"          never list it
 #   status = "in-progress"   list it under "In progress", not in the ranking

@@ -47,7 +47,7 @@ Claude subscription, that comes out of the plan's usage instead.
 | `TOP.md` | The deliverable |
 | `rubric/ranking.md` | What "value soonest" means. Edit this to change the order |
 | `rubric/assess.md`, `rubric/classification.md` | How issues are assessed |
-| `overrides.toml` | Your calls on specific issues: skip, in progress, boost, notes |
+| `overrides.toml` | Manual calls on specific issues: skip, in progress, boost, notes |
 | `config.toml` | Batch sizes, caps and pre-score weights |
 | `state/issues.jsonl` | One record per issue. Git history is the audit trail |
 | `state/last_ranking.json` | The previous ranking, used for stability |

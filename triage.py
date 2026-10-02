@@ -507,7 +507,7 @@ def rank(run, picked):
                  readiness_assessed=rec["readiness_assessed"])
         c |= {k: rec.get(k) for k in ASSESSED if k not in ("is_bug", "not_bug_reason")}
         if note := run.overrides.get(n, {}).get("note"):
-            c["your_note"] = note
+            c["note"] = note
         candidates.append(c)
     previous = [dict(position=k, number=item["number"], action=item["action"],
                      why_now=item["why_now"])
@@ -586,7 +586,7 @@ def render(run, ranking, closed_now):
         if item["movement"] and old is not None and old != pos:
             lines.append(f"- **Moved:** {item['movement']}")
         if note := run.overrides.get(n, {}).get("note"):
-            lines.append(f"- **Your note:** {note}")
+            lines.append(f"- **Note:** {note}")
         lines.append("")
 
     ranked = {item["number"] for item in ranking["items"]}

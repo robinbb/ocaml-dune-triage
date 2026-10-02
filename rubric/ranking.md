@@ -5,11 +5,10 @@ ranking step.
 
 ## Who the list is for
 
-A Tarides engineer who contributes to dune and ships work as small,
-reviewable PRs. Areas already familiar from recent merged work: library
-dependencies and per-module dependency filtering (the #4572 work), ocamldep,
-compilation rules in `dune_rules`, opam-file generation, and cram tests.
-Works on macOS; no Windows machine at hand.
+Anyone working on dune, to help them decide what is best to work on next.
+Assume a contributor who can build dune and run its cram tests on Linux or
+macOS, and who ships work as small, reviewable PRs. Do not assume familiarity
+with any particular part of the codebase.
 
 ## What "value soonest" means
 
@@ -25,8 +24,7 @@ Push an item up when:
 
 - It is ready: there is a reproducer, the root cause is known, a maintainer
   has agreed on the approach.
-- It will land easily: a small, local diff, no open design question, in a
-  familiar area.
+- It will land easily: a small, local diff and no open design question.
 - Its value arrives soon: a regression in the latest release (a point release
   or backport ships it), an item on a release tracker or milestone, a fix
   that unblocks other issues or downstream packages.
@@ -40,7 +38,8 @@ Push an item down when:
 - It has open design questions or no maintainer agreement (typically D5).
 - Someone else is actively working on it, unless the action is to help land
   their PR.
-- It needs a platform that is not at hand, unless the fix is trivial.
+- It can only be reproduced on a platform most contributors don't have, such
+  as Windows or an uncommon architecture, unless the fix is trivial.
 - It has been stale for years with no reproducer.
 
 ## Stability
