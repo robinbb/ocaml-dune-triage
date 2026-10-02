@@ -1,0 +1,108 @@
+# Batch 5 Bug Classification (Issues #9423 to #7630)
+
+## Bugs Found
+
+- **#9396** - dune-project parser does not work if dune-project has a UTF-8 byte-order mark — Parser fails with garbled output when a UTF-8 BOM is present, which is valid UTF-8; this is incorrect behavior on Windows where PowerShell writes BOM by default.
+- **#9326** - freebsd: Error trying to read targets after a rule was run — Build error ("Bad file descriptor") when building on FreeBSD; a crash/failure in the build system.
+- **#9024** - Dune crashes when menhir_flags is in dune-workspace — Unhandled exception/crash when a valid-looking configuration is used; dune should not crash.
+- **#9071** - Error "rmdir(...): Directory not empty" on an NFS setup — Regression from dune 3.7.0 to 3.11.1; NFS cache setup that used to work now fails with errors.
+- **#8968** - Restarting OCaml LSP caused Internal error: attempting to write to a closed channel — Internal error/crash when restarting LSP, dune should handle channel closure gracefully.
+- **#8970** - dune build accepts trailing slashes — Incorrect argument parsing; `dune build abc/` is silently accepted and misinterpreted even if `abc` is a file.
+- **#8989** - Menhir parsers as module group interfaces — When `(include_subdirs qualified)` is enabled, menhir parser files cannot serve as group interfaces, which is a limitation that prevents a valid use case from working.
+- **#9128** - windows: run cannot find *.cmd — `(run)` fails to find programs with `.cmd` extension on Windows because it only tries `.exe`; programs that should be found are not.
+- **#8844** - `dune install` shouldn't install to opam prefix — `dune install` modifies opam switch state without updating it, which is a misfeature/incorrect default behavior.
+- **#8811** - dune crashes when passing `-w` after `dune clean` on aarch64-unknown-linux-gnu — Crash with internal error ("Fs_memo.Event.create called on a build path") on a specific platform.
+- **#8770** - TUI captures clicks when using inside vscode — TUI captures mouse clicks in vscode integrated terminal, preventing clicking on underlined locations; this is broken interaction behavior.
+- **#8727** - The issues of `--ignore-promote-rules` — The flag has known misfeatures: it doesn't work correctly with the fallback mechanism due to a race condition, and the overall design is acknowledged as problematic.
+- **#8709** - Generate cmi files that match the input — Dune generates `.cmi` files with incorrect casing (lowercasing filenames with multiple capitals like `QCheck2`), which surfaced a compiler regression and is itself incorrect behavior.
+- **#8651** - Internal error on tests on windows, hooks failed — Crash/internal error on Windows with "hooks failed" and ENOTEMPTY rmdir errors causing CI timeouts.
+- **#8643** - Enabling (use_standard_c_and_cxx_flags) fails when paired with C++ stubs on Windows — Build failure on Windows because flexlink doesn't understand `-shared-libgcc` flag passed by dune.
+- **#8626** - `#use_output "dune ocaml top"` fails in a project where `dune utop` works — Command fails with undefined global reference even though `dune utop` works fine in the same project; inconsistent behavior.
+- **#8417** - Dune sometimes changes *.opam files in release mode — In release mode (`-p`), dune should not modify opam files but it does; this is incorrect behavior.
+- **#8352** - (allow_empty) rules and messages are confusing — Confusing/incorrect error message for a valid project setup (executable with `(modes js)`); the error message is misleading and the `(allow_empty)` workaround is itself confusing.
+- **#8291** - Please honor CFLAGS — Dune ignores the standard CFLAGS/CXXFLAGS environment variables when compiling C code, which deviates from standard build system behavior and breaks expected workflows.
+- **#8281** - Exception when secondary .opam with bad name exists while running build doc — Internal error/crash when building documentation with a secondary .opam file that has a bad name.
+- **#8242** - Very slow emacs compilation buffer updates — Regression from dune 3.7 to 3.9; emacs compilation buffer updates became very slow due to excessive "Done: 100%" output even when nothing needs building.
+- **#8231** - Displaying full filenames in dune-site before load — Debugging/diagnostic issue where dune-site fails to load on Cygwin with an opaque "Permission denied" error, providing insufficient information to diagnose the problem.
+- **#8075** - Fail to promote over a non-existing file — Promotion fails with a symlink resolution error even though documentation/tests show it should work; broken functionality.
+- **#8073** - Cannot promote empty files over a non-existing file — Empty files cannot be promoted when the target doesn't exist; dune logs that files differ but doesn't create the promoted file.
+- **#8026** - Warning: ltac_plugin.cmxs already found — Spurious warning when building Coq plugins that use `coq-core.plugins.ltac`; the warning is confusing and indicates incorrect library path handling.
+- **#8025** - dune-build-info reports wrong library version in vendored dir — Library version is incorrectly reported as the git hash of the CWD repository instead of the actual library version.
+- **#7962** - Crash when depending on source_tree outside workspace — Crash with internal error instead of a proper error message when `source_tree` references a path outside the workspace.
+- **#7917** - dune clean fails because of .filesystem-clock and .digest-db (NFS) — `dune clean` fails on NFS because dune creates files in `_build` and then complains the directory is not empty.
+- **#7831** - Install fails for a directory with symlinks to a directory — `dune install` fails when the directory contains symlinks to directories; broken install functionality.
+- **#7811** - Vendoring of foreign source trees with leading underscores — Dune silently ignores directories with leading underscores in vendored foreign source trees, causing missing file errors.
+- **#7800** - `(byte shared_object)` linking mode does not allow linking C stubs — Documented linking mode doesn't work as expected; C stubs cannot be linked with byte shared_object mode.
+- **#7761** - `dune build --passive-watch-mode` ignores its argument — Command silently ignores arguments instead of erroring; incorrect behavior.
+- **#7720** - `dune build @doc` does not rebuild pages — After modifying `.mli` files, `dune build @doc` does not rebuild the documentation pages and produces dangling links; broken incremental rebuild.
+- **#7664** - program output from `exec -w` and rule actions interspersed with repeated dune status output — Regression from dune 3.4.1 to 3.7.1; program output is interspersed with repeated status messages, making output unreadable.
+- **#8587** - Add support for `staged_pps` in `dune describe pp` — `dune describe pp` does not work for staged PPXs, producing an error instead of the expected output; acknowledged as an unfixed bug.
+- **#8358** - Cram tests on Windows, line termination and Git warning — Cram tests produce incorrect diffs on Windows due to line terminator handling issues; test output contains the entire file as a diff.
+
+## Not Bugs (skipped)
+
+- **#9423** - ci: fix coverage — Chore: fixing CI coverage report configuration.
+- **#9406** - Warnings about Lock Directory Portability — Feature request: adding portability warnings for lock directories.
+- **#9402** - Solve Time Variable in the Substitution Action — Feature request/enhancement: properly substituting solve-time variables in lock files.
+- **#9400** - Having a dune-system opam package similar to ocaml-system — Feature request/design discussion: creating a dune-system opam package.
+- **#9305** - Support `x-env-path-rewrite` — Feature request: support for a new opam feature.
+- **#9290** - allow dune exec -w + dune build -w running at the same time — Feature request: concurrent watch-mode instances.
+- **#9287** - Add separate examples directory — Documentation/chore: reorganizing examples.
+- **#9281** - Make Package Building More Quiet — Enhancement: reducing build output noise.
+- **#9275** - A warning should be displayed if an error occurred during caching — Enhancement: adding a warning for silent cache errors.
+- **#9264** - proposal: using weak symbols instead of binary rewriting — Proposal/design discussion for an alternative approach to artifact substitution.
+- **#9173** - document plugin versions available for each dune version — Documentation: documenting plugin version support matrix.
+- **#9163** - Installing public C headers — Documentation/feature request: improving C header installation paths.
+- **#9135** - Marking Package Compatibility With Dune Package Management — Feature request: package compatibility marking for package management.
+- **#9055** - document what is considered in "source files" — Documentation: clarifying what constitutes "source files".
+- **#9022** - Configurator: allow querying pkg-config with multiple packages — Feature request: multi-package pkg-config queries.
+- **#9010** - Consider using ASCII printable characters in the fancy TUI — Enhancement/proposal: using ASCII instead of Unicode in TUI.
+- **#9001** - Customizable Sandbox Root — Proposal: customizable sandbox root for deduplicating rules.
+- **#8999** - Double Builds with Shared Cache — Proposal: avoiding redundant builds with shared cache.
+- **#8993** - Support for ppx_inline_test flags — Feature request: automatic inline test flag selection by mode.
+- **#8955** - Dune-build-info could export more information — Feature request: exporting more build info (full hash, commit date).
+- **#8933** - Support the `NO_COLOR` standard in dune — Feature request: supporting the NO_COLOR environment variable.
+- **#8871** - [coq] Changelog for (lang coq 0.8) seems to be missing — Documentation: improving changelog formatting.
+- **#8845** - Opam Files: Better Locations — Enhancement: improving error message locations for opam files.
+- **#8840** - rfc(pkg): progress indicator for downloads — Feature request/RFC: download progress indicator.
+- **#8838** - make dune-configurator works in cross-module environment — Feature request: cross-compilation support in dune-configurator.
+- **#8772** - Building Private Libraries/Executables with Lock Directory — Feature request: supporting private library/executable dependencies in lock directory.
+- **#8650** - Improved Concurrency when building workspace and packages — Enhancement: improving build concurrency between packages and workspace.
+- **#8638** - Provide a way to call dune programatically — Feature request: dune-as-a-library API.
+- **#8620** - Add mouse movement events for tui — Feature request: mouse hover events in TUI.
+- **#8597** - Sets of warnings for foreign stubs — Proposal: configurable warning sets for C/C++ compilation.
+- **#8586** - Using PPX — Proposal: using PPX internally in dune codebase.
+- **#8550** - Promote (public_name <package>.<subpackage>) as alternative — Enhancement: better subpackage support to reduce opam namespace pollution.
+- **#8532** - tui: add copy to clipboard button — Feature request: clipboard support in TUI.
+- **#8506** - Build only Dependencies — Feature request/proposal: build-only dependency concept.
+- **#8495** - rpc: make Diagnostic.Event.t simpler — Refactoring: simplifying RPC diagnostic type.
+- **#8473** - Materialized Build Environments — Feature request: materialized build environments for Windows.
+- **#8465** - Allow monitoring multiple dune instances — Feature request: multi-instance monitoring in dune monitor.
+- **#8412** - Documentation lacks clarity on using system headers with `(include_dirs)` — Documentation: improving C header docs.
+- **#8371** - Versioning melange CLI flags — Enhancement: versioning CLI flags for melange.
+- **#8327** - melange: introduce variable for `melange.emit` target dir — Feature request: new variable for melange target directory.
+- **#8274** - configuration option for maximum dune cache size — Feature request: cache size limit configuration.
+- **#8240** - Policy for constructing the environment for building opam packages — Design discussion/proposal: environment variable policy for package building.
+- **#8110** - It should be possible for a package to include inline tests but only depend on `ppx_inline_test` as a `with-test` dependency — Feature request: with-test dependency support for inline tests.
+- **#8099** - coq.extraction does not support `package` field — Feature request: adding `package` field support to coq.extraction.
+- **#8051** - allow to override the OCaml dialect — Feature request: overridable OCaml dialect/parser.
+- **#7988** - move glob syntax doc to dune-glob — Documentation chore: moving docs to a better location.
+- **#7972** - Allow building only dependencies of a target — Feature request: building only dependencies of a target.
+- **#7939** - melange -- option to enable melange mode only if melange is installed — Feature request: conditional melange mode.
+- **#7913** - [coq] auto-infer plugins field — Feature request: auto-inferring Coq plugins.
+- **#7912** - [coqdoc] support for "--external" — Feature request: external documentation linking for Coq.
+- **#7866** - Docs: Clarify linking modes description — Documentation: improving linking modes docs.
+- **#7829** - Specify a specific shell to execute cram test commands — Feature request: configurable shell for cram tests.
+- **#7805** - Add --debug-cache= information to chrome trace — Enhancement: improving cache debug output format.
+- **#7784** - add dune show command (or rename dune describe?) — Feature request/enhancement: new `dune show` command umbrella.
+- **#7774** - Strip Sandboxing Information from Traces — Enhancement: cleaning up trace output.
+- **#7759** - Remove Color Handling from Rules — Refactoring: moving color handling to its own library.
+- **#7758** - Move Artifact Substitution to own Library — Refactoring: extracting artifact substitution code.
+- **#7737** - explanation: the ocaml compilation model — Documentation: new explanation guide.
+- **#7731** - `dune ocaml-merlin`: enable PPX phase cache — Feature request: enabling merlin PPX cache.
+- **#7699** - Building Opam Packages: Patches — Feature request: patch action support for opam packages.
+- **#7670** - Allow "dune coq top" to step through unsaved files — Feature request: supporting unsaved files in `dune coq top`.
+- **#7644** - dirs should complain about non-immediate subdirectories — Enhancement: better error for non-immediate subdirectory references.
+- **#7630** - Feature request: good interactions of `(include_subdirs qualified)` and `unqualified` — Feature request: better interaction between qualified and unqualified subdirs.
+- **#8652** - Overlapping Dependencies in Lock Directory ("in and out problem") — Feature request/design issue: supporting dependency edges that go through lock directory and back to workspace.
+- **#8686** - `file-depends` support — Feature request: supporting opam file-depends in package management.

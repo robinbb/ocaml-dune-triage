@@ -1,0 +1,26 @@
+# Settings for `./triage.py run`. Command-line flags override [run].
+
+[run]
+assess_cap = 30   # new or changed issues assessed per run
+refresh_cap = 60  # shortlisted issues re-assessed per run, so the ranking sees current facts
+batch_size = 8    # issues per claude call when assessing
+shortlist = 25    # candidates given to the ranking step
+top = 12          # items in TOP.md
+stale_days = 30   # re-assess a shortlisted issue whose assessment is older than this
+model = ""        # claude --model; empty means claude's default
+effort = ""       # claude --effort; empty means claude's default
+
+# The pre-score only decides which candidates reach the ranking step.
+# The order in TOP.md is the ranking step's judgment (rubric/ranking.md).
+[score]
+severity = { S1 = 10, S2 = 8, S3 = 5, S4 = 4, S5 = 8, S6 = 3, S7 = 2 }
+difficulty = { D1 = 1.0, D2 = 0.6, D3 = 0.3, D4 = 0.15, D5 = 0.05 }
+reach = { low = 0.8, medium = 1.0, high = 1.3 }
+activity = 0.25   # weight of log2(1 + reactions + comments)
+
+# Multipliers applied once an issue has a readiness assessment.
+[score.readiness]
+reproducer = 1.3
+root_cause_known = 1.2
+approach_agreed = 1.3
+open_questions = 0.7

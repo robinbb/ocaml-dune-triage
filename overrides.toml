@@ -1,0 +1,10 @@
+# Your own calls about specific issues. The tool never contradicts these.
+#
+#   status = "skip"          never list it
+#   status = "in-progress"   list it under "In progress", not in the ranking
+#   boost = 2.0              multiply its pre-score, to help it reach the shortlist
+#   note = "..."             shown in TOP.md and given to the ranking step
+
+[issues.10335]
+status = "in-progress"
+note = "Reproducer test pushed to robinbb/dune, branch robinbb-fix-exe-in-dir-target-10335."

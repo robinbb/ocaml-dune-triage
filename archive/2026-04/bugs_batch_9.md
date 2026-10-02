@@ -1,0 +1,107 @@
+# Batch 9 Bug Classification (Issues #3868 to #2757)
+
+## Bugs Found
+
+- **#3868** - Incorrect passing of linker options from pkg-config to ocamlmklib — ocamlmklib emits warnings about link options returned by pkg-config (e.g. `-Wl,--export-dynamic`), meaning options are incorrectly passed/omitted
+- **#3805** - No such file or directory when DUNE_BUILD_DIR is set during test — `dune runtest` fails when `DUNE_BUILD_DIR` environment variable is set
+- **#3784** - "Too many opam files for package" error is incorrect — Error message references opam files even for packages defined in dune-project, producing a misleading/wrong error
+- **#3779** - %{lib-private} and multiple packages — `%{lib-private}` does not work when used across packages defined in the same project
+- **#3755** - %{env:FOO=<val>} does not accept spaces in <val> — Spaces in default values for env variable expansion cause a parse error, which is a limitation/misfeature
+- **#3700** - OPAM file generation doesn't respect (lang dune) — When `(lang dune 2.5)` is set but `(dune (>= 1.11))` is specified in depends, dune silently generates an invalid opam file instead of warning
+- **#3645** - "The module X is an alias for module Y.X, which is missing" when X comes from a virtual library — Aliased modules from virtual libraries produce incorrect errors when installed/pinned (works when vendored)
+- **#3642** - Adding new formatters can break older projects — Dune tries to invoke ocamlformat even without a `.ocamlformat` file, producing warnings/errors for projects that don't use it
+- **#3638** - env-vars ignored under exec — `env-vars` set in the `(env)` stanza are not applied when running executables with `dune exec`
+- **#3634** - foreign archive handling — Inconsistent behavior regarding whether dune links against .a or .so archives; different behavior from identical configuration
+- **#3618** - Test "github660" does not pass with flambda — A dune test fails when built with flambda, indicating a regression or incorrect behavior
+- **#3591** - Internal error: dependency cycle with virtual_modules — Building a project with virtual_modules causes an internal error (dependency cycle crash) instead of proper behavior
+- **#3569** - Expect tests with (implicit_transitive_deps false) — Setting `(implicit_transitive_deps false)` causes `Unbound module Expect_test_common` when using expect tests, even though the dependency should be resolved
+- **#3549** - dune not checking modules in modules_before_stdlib — Dune doesn't validate/complain about invalid module names in `modules_before_stdlib`
+- **#3516** - dune format-dune-file doesn't respect the formatting stanza — `dune format-dune-file` ignores the `(formatting (enabled_for ocaml reason))` stanza and formats dune files anyway
+- **#3487** - Hinted `external-lib-deps` for `dune utop` does not include Odoc — The suggested `dune external-lib-deps --missing` command does not detect the missing `utop` library, giving misleading guidance
+- **#3484** - stacktrace when trying to promote into a binary in use (linux) — Dune crashes with a stacktrace when trying to promote a binary that is currently running, instead of handling the "Text file busy" error gracefully
+- **#3474** - bootstrap does not properly search PATH — Dune bootstrap incorrectly assumes all `ocaml*` programs live next to the first one found, instead of properly searching PATH for each
+- **#3467** - modes not respected in combination with library with public_name — `(modes native)` still causes `ocamlc` to run on implementation files when a library has a `public_name`
+- **#3463** - Dune is mangling qtest/ounit output — Dune's output buffering corrupts escape codes related to cursor movement, producing garbled test output
+- **#3382** - "Unknown constructor vendored_dirs" when using OCaml syntax — `vendored_dirs` works in static dune files but fails with "Unknown constructor" when using OCaml (tuareg) syntax
+- **#3378** - Library variable expansion needs a library installed to work — `%{lib:<pkg>:<file>}` fails when the package only has `install` stanzas and no actual library/executable definition
+- **#3362** - Cannot use `%{lib:...}` in the `flags` stanza — Using `%{lib:...}` in flags gives an error even though a workaround with intermediate files works, indicating an artificial restriction
+- **#3349** - `(disable_dynamically_linked_foreign_archives true)` should not try to build js targets — Default build target tries to build `.bc.js` targets even when dynamic foreign archives are disabled, causing build failure
+- **#3322** - dune exec needs to add .exe on Windows — `dune exec -- foo` on Windows doesn't consider `foo.exe`, leading to stale execution or errors
+- **#3286** - Failing package builds with Load commands in Coq files — `dune build -p` doesn't copy non-module files needed by Coq's `Load` command into the build tree, causing build failures
+- **#3230** - Long form target inference is not properly versioned — Target inference for long-form actions lacks a `since` version check, allowing it in `(lang dune 1.2)` when it should only work in >= 2.0
+- **#3223** - dune-project not formatted with @fmt — `dune build @fmt` does not format the `dune-project` file, inconsistent with formatting of other dune files
+- **#3214** - Fl_dynload.load_packages in a PPX — `findlib_initl.ml-gen` is not generated for PPX preprocessors, so `Fl_dynload.load_packages` fails in PPX rewriters
+- **#3192** - (package ...) doesn't work when package is installed and not in the workspace — `(deps (package bar))` fails with "No rule found for alias .bar-files" when the package is installed via opam rather than in the workspace
+- **#3182** - The @all alias does not produce .cmt files which are produced by @check — `dune build` produces only `.cmti` but not `.cmt`, while `dune build @check` produces both, which is inconsistent
+- **#3173** - can't promote into a directory start with underscore — Promoting output into a directory starting with underscore fails with "directory does not exist" even though the directory exists
+- **#3160** - Dune runtest incorrectly changes escape codes related to cursor movement — Dune's output processing corrupts ANSI escape codes that involve cursor movement, breaking formatted test output (e.g., Rely)
+- **#3151** - Recursive alias in vendored directories are not well defined — `@all` and `@@all` behave inconsistently in vendored directories
+- **#3040** - Dune does not correctly handle c_compiler using a shim — Dune incorrectly splits a C compiler shim command (e.g., `xcrun -sdk macosx10.14 clang`) and passes parts as separate `-ccopt` arguments
+- **#3025** - dune install: ocamlfind point to the wrong directory in a local switch — In a local switch without ocamlfind, dune uses the global switch's ocamlfind and tries to install to the wrong location
+- **#3008** - Failed to pass tests: "The selected switch default is not installed" — Test suite fails because it assumes a global opam switch named "default" exists
+- **#2991** - Error "The command line is too long" for very short command line (<250 characters) on Cygwin/Windows — Build fails with "command line too long" error even for very short command lines on Windows/Cygwin
+- **#2938** - (dirs ...) not recognised in dune2 — `(dirs *)` works in a static dune file but is rejected with "Unknown constructor" when used via OCaml-syntax dune file generation
+- **#2913** - Dune should not look up other sub-directories when given `-p` — `dune build -p project-a` incorrectly scans for packages used by `project-b` in sibling directories, causing race conditions
+- **#2909** - Virtual Libraries: Dune files don't include required source entries when relying on virtual modules — Generated `.merlin` files for modules depending on virtual libraries lack `S` source entries, breaking goto-location in merlin
+- **#2818** - Cycles reported by dune are cryptic — Module cycle errors reported by dune don't correspond to actual user code, likely due to over-approximation of the dependency graph
+- **#2773** - [sandbox] odoc rules are broken — Odoc rules produce broken cross-references (xref-unresolved) inside the sandbox
+- **#2757** - dune install ignores --for-release-of-packages — The `install` command ignores the `--for-release-of-packages` flag that works for `build`, `runtest`, and `external-lib-deps`, requiring a different invocation
+
+## Not Bugs (skipped)
+
+- **#3866** - [RFC] Making small executable by using only dynamic libraries — Proposal/RFC for a new feature to reduce executable size
+- **#3864** - [RFC] Name Mangling for Package Private Libraries — Proposal/RFC for handling private library name collisions
+- **#3856** - Additional flexibility over raw git describe in Build_info.version — Feature request for more control over version string generation
+- **#3818** - Problems with Dune and ocamldebug — Feature request / documentation request about building debuggable executables
+- **#3734** - [RFC] Vendor in Vendor — Proposal/RFC for handling vendored dependencies with their own vendored dependencies
+- **#3723** - Feature request: support `enabled_if` in `include` — Feature request to add conditional includes
+- **#3531** - Generate JSON Compilation Database — Feature request for generating JSON compilation databases
+- **#3527** - Better support for code examples — Feature request for scoping/isolation of code examples in projects
+- **#3500** - Support building executables against OCaml 4.11's instrumented runtime — Feature request for instrumented runtime support
+- **#3499** - Allow dependencies for executables — Feature request to declare runtime dependencies between executables
+- **#3497** - OR and AND combinators in dune-project dependencies — Feature request for more flexible dependency specification
+- **#3495** - doc: install html documentation — Feature request to install generated HTML docs
+- **#3471** - Custom lint ? — Feature request for custom promotable lint actions
+- **#3464** - [RFC] allow user actions to request direct access to the terminal — RFC/enhancement for interactive terminal access in build actions
+- **#3454** - external-lib-deps --missing could suggest installing MDX for MDX stanzas — Enhancement request for better dependency suggestions
+- **#3439** - Make `Fiber.with_error_handler` deterministic — Proposal to make error handling deterministic in the Fiber library
+- **#3418** - Add (deps (library x)) to depend on an installed library in rules — Enhancement request for new dependency type in rules
+- **#3387** - Add copy_dir — Enhancement request to add directory copying support
+- **#3385** - Allow subdir to work with variables — Enhancement request to allow variables in subdir stanza
+- **#3374** - Allow targets in subdirectories — Enhancement request to allow rule targets in subdirectories
+- **#3368** - Ability to format non-OCaml files — Enhancement request for formatting arbitrary file types
+- **#3365** - Cannot use a static directory in install stanza — Enhancement request to allow installing directories (not just files)
+- **#3359** - Release profile documentation is unclear about exact effects — Documentation issue about what the release profile does
+- **#3355** - Improve installation of C headers for foreign archive sandboxes — Enhancement request for easier C header installation
+- **#3345** - Error in documentation for foreign build sandboxing — Documentation issue (incorrect example in docs)
+- **#3342** - Add support for assembly language for foreign_stubs — Feature request to add assembly language support
+- **#3341** - Add a way to pass the context CFLAGS to foreign build sandboxing — Enhancement request (though `%{c_flags}` crashing is a bug, the core request is for a new feature; the crash aspect is a secondary bug)
+- **#3335** - Libraries vendoring other libraries are unusable — Enhancement request for vendored library linking/name-mangling support
+- **#3334** - Documentation request: Explain documentation generation — Documentation improvement request
+- **#3332** - Configurator: add support for pkg-config --variable=... — Feature request for additional pkg-config query support
+- **#3331** - allow to augment/filter @all with mode (bytecode or native) — Feature request for mode-specific build targets
+- **#3328** - doc improvement — Documentation improvement request for foreign stubs
+- **#3323** - Improved semantics of @path/install target — Enhancement request for scoped install alias behavior
+- **#3314** - Decouple qualified/unqualified from including subdirectories — Enhancement/refactoring of include_subdirs syntax for Coq compatibility
+- **#3309** - Named targets — Enhancement request for named targets in rules
+- **#3284** - Support for menhir's `.messages` files — Feature request for menhir messages file support
+- **#3279** - Documentation suggestion: scope of `env` stanzas — Documentation improvement request
+- **#3275** - OCamlformat error output — Enhancement request to pre-validate .ocamlformat before running on each file
+- **#3271** - Ability to control the meaning of :standard dirs at workspace level — Enhancement request to customize default directory patterns
+- **#3379** - Have a variable to point to installed library paths — Feature request for a variable pointing to installed library directories
+- **#3171** - dune exec for adverbial commands (time, afl, ...) — Feature request for wrapping executables with adverbial commands
+- **#3159** - Built-in dependency that says if the current build is processing any changes — Feature request for a smarter alternative to `(deps universe)`
+- **#3154** - Setting dune build directory from dune-workspace — Enhancement request to configure build directory from workspace file
+- **#3113** - Improved support for shared transitive dependencies — Feature request for better transitive dependency handling
+- **#3101** - Multi-version configuration files — Enhancement request for version-aware config files
+- **#3070** - Unable to get dune project installation working — User confusion / documentation issue about installation workflow
+- **#3044** - --display not documented in manual — Documentation issue
+- **#2992** - Autoformat generated files before diffing/promotion — Feature request for formatting generated files
+- **#2977** - Linker flags vs. libraries — Enhancement request for separate linker flags handling (related to #3868)
+- **#2976** - Ability to configure the installation program for misc installs — Feature request for custom install commands
+- **#2966** - Should opam file generation use promotion — Enhancement proposal for opam generation workflow
+- **#2947** - `dune build fmt` issues exit code <> 0 — Enhancement/documentation request about exit code behavior (current behavior is arguably correct, just undocumented)
+- **#2945** - Add iteration to user actions — Proposal/RFC for adding foreach iteration to user actions
+- **#2861** - Code signing and other post processing hooks — Feature request for post-build hooks
+- **#2856** - Documentation request: Finding the root of the current workspace — Documentation request about workspace root path
+- **#2838** - dune: option `-j' cannot be repeated — Enhancement request to allow overriding the `-j` flag
