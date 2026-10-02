@@ -1,113 +1,113 @@
 {
- "date": "2026-10-01",
+ "date": "2026-10-02",
  "items": [
   {
    "number": 11017,
    "action": "Close as fixed by #11131",
-   "why_now": "The fix was merged in #11131 (coqdoc_header/coqdoc_footer fields), but the issue is still open. Closing it takes minutes.",
-   "first_step": "Check that #11131 is in a released dune and that the docs mention the new fields, then close with a comment linking #11131.",
+   "why_now": "Already fixed: merged PR #11131 added coqdoc_header/coqdoc_footer fields that track their dependencies. Closing takes minutes and makes the tracker more accurate.",
+   "first_step": "Check that coqdoc_header/coqdoc_footer are in the current docs and on main, then close the issue with a comment pointing to #11131 and the new fields.",
    "size": "hours",
    "risks": null,
-   "movement": "New: first ranking."
+   "movement": "New: first ranking. Closing an already-fixed issue takes minutes."
   },
   {
    "number": 14267,
-   "action": "Close as a duplicate of #14260 once it is confirmed that 3.23 reports a user error",
-   "why_now": "A collaborator says main already gives a proper error instead of the internal error. Checking that and closing is quick.",
-   "first_step": "Run the reporter's rocq.theory + rocq.extraction + include_subdirs reproducer on current main and check that the output is a user error, not Map.add_exn.",
+   "action": "Close as duplicate of #14260 after confirming 3.23+ reports a user error",
+   "why_now": "A collaborator says main already turns the crash into a proper error. Confirming that and closing takes very little work.",
+   "first_step": "Run the reporter's reproducer on current main and check that it prints a user error, not 'Map.add_exn: key already exists'. Then close as a duplicate of #14260.",
    "size": "hours",
-   "risks": "If it still crashes, it becomes a real fix in Rocq rules, which is an unfamiliar area.",
-   "movement": "New: first ranking."
+   "risks": "If it still crashes, it becomes a small fix in the rocq rules. The reporter may also push back, since older versions accepted this setup.",
+   "movement": "New: first ranking. Likely already fixed, so it should take only minutes."
+  },
+  {
+   "number": 15609,
+   "action": "Land PR #16491 fixing duplicated diagnostics for `dune build` over RPC",
+   "why_now": "Regression since 3.24.1 that is on the 3.25.0 milestone and release tracker #15593. The fix PR is open, a reproduction test is already merged, and the PR only needs a review.",
+   "first_step": "Review PR #16491 against the merged reproduction test from #15610 and check that the expected output now shows each diagnostic once.",
+   "size": "hours",
+   "risks": "The fix changes how the watch server reports diagnostics, which affects RPC clients (editors). Check for knock-on changes in other RPC tests.",
+   "movement": "New: first ranking. A release-milestone regression whose fix PR is waiting for review."
+  },
+  {
+   "number": 16226,
+   "action": "Help land PR #16239 fixing the OCAMLFIND_CONF crash for 3.24.3",
+   "why_now": "Regression in 3.24.2 that blocks MirageOS/solo5 builds in Nixpkgs, and it is planned for the 3.24.3 patch release. The reproduction test is merged and a fix exists, but the PR has been a draft for a month.",
+   "first_step": "Ask Alizter on #16239 what is left before it leaves draft. Then review the change against the merged test from #16236.",
+   "size": "hours",
+   "risks": "The draft may be waiting on something not mentioned in the thread. The patch release timing depends on the maintainers.",
+   "movement": "New: first ranking. A patch-release regression with a fix drafted."
+  },
+  {
+   "number": 16516,
+   "action": "Help land PR #16518 fixing the spurious dependency cycle from compile_commands.json rules",
+   "why_now": "High reach: any project that bumps to lang 3.23 and uses copy_files from a parent directory can hit it. The reproduction test is merged and the root cause is known. A good candidate for the 3.25.0 tracker.",
+   "first_step": "Review draft PR #16518. Check that Dir_contents is only evaluated for stanzas with foreign stubs, and add a test case where foreign stubs are present.",
+   "size": "days",
+   "risks": "Alizter is actively working on it, so help with review rather than starting a competing fix. There is still an open question about whether the cycle can come back when foreign stubs are used.",
+   "movement": "New: first ranking. High-reach regression with an active fix PR."
   },
   {
    "number": 11941,
-   "action": "Fix foreign stubs overriding the user's -g0 by moving -g into :standard (revive #11942)",
-   "why_now": "S1 silent build-correctness bug. The approach is agreed, a prototype exists that the reporter confirmed works, and the diff is a small one in dune_rules (foreign_rules.ml).",
-   "first_step": "Read why #11942 was closed unmerged. Then rebase or redo it on main with a cram test showing that `:standard \\ -g` drops -g.",
+   "action": "Fix foreign stubs overriding the user's -g0 by moving -g into :standard",
+   "why_now": "S1 build-correctness bug with a known root cause, an approach a collaborator agreed to, and a previous PR (#11942) that the reporter confirmed worked. Reviving it is a small local diff.",
+   "first_step": "Find out why #11942 was closed unmerged (check its thread). Then re-apply the change in src/dune_rules/foreign_rules.ml with a cram test.",
    "size": "hours",
-   "risks": "May need a dune lang version guard to keep the current flag order for older projects. #11942 may have been closed for a reason that still applies.",
-   "movement": "New: first ranking."
+   "risks": "May need a dune lang version guard to keep current behaviour for older projects. #11942 may have been closed for a reason that still applies.",
+   "movement": "New: first ranking. A ready S1 with a previous working patch."
+  },
+  {
+   "number": 8352,
+   "action": "Land PR #15071 clarifying the empty-package error",
+   "why_now": "High-reach UX problem with an approach a collaborator agreed to. The PR has been open since 2026-06 with no activity and needs only a review or rebase.",
+   "first_step": "Rebase PR #15071 on main, check that its message matches the proposed 'has nothing to install' wording, and request review.",
+   "size": "hours",
+   "risks": "There may be pressure to also mention public_name, or to make (modes js) imply allow_empty. Keep those out of scope.",
+   "movement": "New: first ranking. A stalled small PR that only needs a review."
+  },
+  {
+   "number": 5313,
+   "action": "Land PR #14981 rejecting nested paths in (dirs ...)",
+   "why_now": "Small, already-written PR that turns a silent misconfiguration into an error. Only needs review and landing.",
+   "first_step": "Rebase PR #14981, run the cram tests, and request a maintainer review.",
+   "size": "hours",
+   "risks": "Rejecting nested paths could break projects that relied on them being silently ignored. Check whether the error needs a lang version guard.",
+   "movement": "New: first ranking. A small PR waiting to land."
+  },
+  {
+   "number": 15093,
+   "action": "Fix the `dune describe pp` internal error when given an absolute path",
+   "why_now": "Internal-error crash with a known fix pattern (from #15104) and an agreed approach. A small local diff that also moves umbrella #12230 forward.",
+   "first_step": "Write a cram test that runs `dune describe pp $PWD/foo.ml`. Then localize the path in describe_pp.ml with Path.Expert.try_localize_external or Arg.Workspace_path.",
+   "size": "hours",
+   "risks": null,
+   "movement": "New: first ranking. A small crash fix with a clear pattern to follow."
   },
   {
    "number": 16375,
    "action": "Fix `dune build <pkg>.opam` silently doing nothing since 3.24",
-   "why_now": "S1 regression in the latest release with high reach. It is in opam-file generation, a familiar area, and a fix could ship in a 3.24 point release.",
-   "first_step": "Write a cram test showing that `dune build foo.opam` exits 0 without updating the file. Then ask Alizter on the issue whether promoting or a hint pointing to `@opam` is preferred.",
+   "why_now": "Regression in the latest release with high reach: many projects regenerate opam files this way. A fix could ship in a 3.24.x point release.",
+   "first_step": "Write a cram test showing `dune build foo.opam` exits 0 without updating the file. Then propose in the issue that it prints a hint pointing to `dune build @opam` (or promotes the file), and get a maintainer to agree.",
    "size": "days",
-   "risks": "No fix is agreed for the explicit-target case. The behaviour change from #14108 may have been intentional, which would limit the fix to a hint.",
-   "movement": "New: first ranking."
-  },
-  {
-   "number": 8352,
-   "action": "Land PR #15071 (clearer empty-package / allow_empty error)",
-   "why_now": "High-reach UX confusion. A maintainer's PR already exists and only needs review, plus whatever follow-up the review asks for.",
-   "first_step": "Review #15071, rebase it if needed, check the cram test output, and ping rgrinberg to merge.",
-   "size": "hours",
-   "risks": "Side questions (mention public_name? should `(modes js)` imply allow_empty?) could widen the scope. Keep them out of the PR.",
-   "movement": "New: first ranking."
-  },
-  {
-   "number": 5313,
-   "action": "Land PR #14981 (reject nested paths in `dirs`)",
-   "why_now": "The PR is open and only needs review or a rebase. Turning a silent no-op into an error is a small change.",
-   "first_step": "Review #14981, rebase it on main, check the error test, and ask rgrinberg about merging.",
-   "size": "hours",
-   "risks": "Projects that currently have harmless nested `dirs` entries will start to fail. Check whether a lang version guard is needed.",
-   "movement": "New: first ranking."
-  },
-  {
-   "number": 14085,
-   "action": "Fix the 3.22.0 regression where excluding a `(select)`-generated module from another stanza's modules errors",
-   "why_now": "A regression that blocks downstream: goblint added a conflict with dune 3.22. It is in library dependencies and module selection, a familiar area.",
-   "first_step": "Turn the reporter's reproducer into a cram test, then bisect 3.21.1..3.22.0 (anmonteiro's changes are suspected).",
-   "size": "days",
-   "risks": "Root cause unknown, and the fix may need anmonteiro's input.",
-   "movement": "New: first ranking."
-  },
-  {
-   "number": 9979,
-   "action": "Fix byte-mode linking picking installed stublibs before local ones",
-   "why_now": "S1 correctness bug for anyone developing a library that is also installed in the switch (eio, mirage-crypto). A failing test (#10028) is already merged, and the proposed fix is local.",
-   "first_step": "Find where the bytecode link rule emits the -I stublibs flags, order local libraries before installed ones, and update the expected output of the #10028 test.",
-   "size": "days",
-   "risks": "No maintainer has formally signed off on the approach, only proposals and support. Reordering could change other users' link behaviour.",
-   "movement": "New: first ranking."
+   "risks": "No agreed approach yet: maintainers need to decide between a promotion and a warning or error. Interacts with the intentional behaviour change in #14108.",
+   "movement": "New: first ranking. High-reach regression, but it needs a design decision first."
   },
   {
    "number": 15060,
-   "action": "Make `dune cache clear`/`trim` remove pre-3.22 cache layout entries",
-   "why_now": "High reach: after an upgrade the cache grows without bound. The first step is agreed and the scope is clear.",
-   "first_step": "Ask dibrinsofor on the issue whether they are still working on it. If not, write a cram test that seeds a legacy-layout cache dir and extend clear/trim to delete it.",
+   "action": "Make `dune cache clear` and `dune cache trim` remove entries in the pre-3.22 cache layout",
+   "why_now": "High reach: after an upgrade, the cache grows without bound and the existing commands can't reclaim the space. The first step is agreed and has a reproducer.",
+   "first_step": "Check with dibrinsofor on the issue whether they are still working on it. If not, write a cram test that seeds an old-layout cache directory, then extend clear/trim to delete the legacy versioned directories.",
    "size": "days",
-   "risks": "A contributor offered to do it (no PR yet). The open question about future layout versions, and the separate size-accounting problem sim642 reported, could widen the scope.",
-   "movement": "New: first ranking."
+   "risks": "Someone offered to work on it, so coordinate before starting. There is an open question about how to handle future layouts. The size-accounting discrepancy sim642 reported may be a separate bug.",
+   "movement": "New: first ranking. High-reach disk usage problem with the first step agreed."
   },
   {
-   "number": 8025,
-   "action": "Make dune-build-info return None for versionless projects in vendored dirs",
-   "why_now": "The approach was agreed at a dev meeting. It affects opam-monorepo and mirage users and has waited since 2023.",
-   "first_step": "Write a cram test with a vendored dune-project without (version) inside a git repo, showing the wrong version, then implement the None case.",
+   "number": 9979,
+   "action": "Fix byte-mode linking so local stub libraries come before installed stublibs",
+   "why_now": "S1 that hits developers of libraries also installed in their switch (eio, mirage-crypto). A failing test is already merged and two maintainers support reordering the -I flags.",
+   "first_step": "In the bytecode link rule, put the -I flags for local libraries before the installed stublibs directory, and update the expected output of the test from #10028.",
    "size": "days",
-   "risks": "There is no reproducer yet, so building one is the first piece of work.",
-   "movement": "New: first ranking."
-  },
-  {
-   "number": 15755,
-   "action": "Help land PR #16237 so `dune test --force` reruns cram tests",
-   "why_now": "Recent, has medium reach, and a fix PR apparently exists. Cram tests are a familiar area.",
-   "first_step": "Find PR #16237, check its author and status, and review it against a cram test showing that `--force` reruns a .t file.",
-   "size": "days",
-   "risks": "Maintainers disagree on what --force should mean (shonfeder vs Alizter), so the PR may stall on design.",
-   "movement": "New: first ranking."
-  },
-  {
-   "number": 5104,
-   "action": "Add an upgrade hint to the `select` file-format error and document the naming restriction",
-   "why_now": "Small change in lib_dep.ml, a familiar area. It removes a confusing error that has no hint.",
-   "first_step": "Write a cram test with a `select` branch pointing to foo/a.foo.ml, then add a hint suggesting a copy rule into a.{name}.ml.",
-   "size": "hours",
-   "risks": "Low reach. A maintainer may prefer relaxing the check (as bobot suggested) over a hint.",
-   "movement": "New: first ranking."
+   "risks": "The approach has support but has not been formally agreed. Reordering -I flags may change behaviour in other link setups, such as #3910.",
+   "movement": "New: first ranking. An S1 with a failing test merged and a fix direction supported."
   }
  ],
  "dropped": []
