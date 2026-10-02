@@ -51,4 +51,6 @@ Claude subscription, that comes out of the plan's usage instead.
 | `config.toml` | Batch sizes, caps and pre-score weights |
 | `state/issues.jsonl` | One record per issue. Git history is the audit trail |
 | `state/last_ranking.json` | The previous ranking, used for stability |
-| `archive/2026-04/` | The April 2026 triage this state was seeded from (`./triage.py seed`) |
+
+Records with `"source": "april-2026"` come from the April 2026 triage. Its
+files are in `archive/2026-04/` in the first commit (`53f7372`).

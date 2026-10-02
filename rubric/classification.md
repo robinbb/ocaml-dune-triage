@@ -1,8 +1,9 @@
 # Bug Classification
 
 How each open [ocaml/dune](https://github.com/ocaml/dune) issue is classified.
-Adapted from the April 2026 triage (`archive/2026-04/methodology.md`), whose
-examples below are issue numbers from that snapshot.
+Adapted from the April 2026 triage's methodology
+(`archive/2026-04/methodology.md` in commit `53f7372`). The examples below are
+issue numbers from that snapshot.
 
 ## Scope
 

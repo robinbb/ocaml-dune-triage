@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Triage ocaml/dune issues and write TOP.md, an ordered list of what to work on.
 
-  ./triage.py seed        build state/issues.jsonl from archive/2026-04 (once)
   ./triage.py run         sync with GitHub, assess new and changed issues,
                           rank the shortlist, write TOP.md
 
@@ -12,7 +11,6 @@ import argparse
 import datetime as dt
 import json
 import math
-import re
 import subprocess
 import sys
 import tomllib
@@ -24,8 +22,6 @@ STATE = ROOT / "state" / "issues.jsonl"
 LAST_RANKING = ROOT / "state" / "last_ranking.json"
 TOP = ROOT / "TOP.md"
 WORK = ROOT / "work"
-APRIL = ROOT / "archive" / "2026-04"
-APRIL_FETCHED = "2026-04-09T21:26:00Z"
 REPO = ("ocaml", "dune")
 
 CATEGORY_NAMES = {
@@ -96,40 +92,6 @@ def load_overrides():
         return {}
     issues = tomllib.loads(path.read_text()).get("issues", {})
     return {int(n): v for n, v in issues.items()}
-
-
-# --- seed ----------------------------------------------------------------
-
-NOT_BUG_LINE = re.compile(r"^- \*\*#(\d+)\*\* - (.*) — (.*)$")
-
-
-def cmd_seed(args):
-    if STATE.exists() and not args.force:
-        sys.exit(f"{STATE.relative_to(ROOT)} already exists (use --force to overwrite)")
-    base = dict(state="open", readiness_assessed=False, source="april-2026",
-                assessed_at="2026-04-10", issue_updated_at=APRIL_FETCHED)
-    records = {}
-    for bug in json.loads((APRIL / "difficulty_all.json").read_text()):
-        n = bug["number"]
-        records[n] = base | dict(
-            number=n, title=bug["title"], is_bug=True,
-            category=bug["category"], severity=bug["severity"],
-            difficulty=bug["difficulty"], desc=bug["desc"])
-    for md in sorted(APRIL.glob("bugs_batch_*.md")):
-        in_not_bugs = False
-        for line in md.read_text().splitlines():
-            if line.startswith("## "):
-                in_not_bugs = line.startswith("## Not Bugs")
-                continue
-            m = in_not_bugs and NOT_BUG_LINE.match(line)
-            if m:
-                n = int(m[1])
-                records[n] = base | dict(number=n, title=m[2], is_bug=False,
-                                         not_bug_reason=m[3])
-    STATE.parent.mkdir(exist_ok=True)
-    save_records(records)
-    bugs = sum(r["is_bug"] for r in records.values())
-    log(f"Seeded {len(records)} records ({bugs} bugs) from {APRIL.relative_to(ROOT)}")
 
 
 # --- GitHub --------------------------------------------------------------
@@ -622,7 +584,7 @@ def cmd_run(args):
             cfg["run"][key] = getattr(args, key)
     run = Run(cfg)
     if not run.records:
-        sys.exit("No state yet: run ./triage.py seed first")
+        sys.exit(f"{STATE.relative_to(ROOT)} is missing or empty")
 
     log("Listing open issues on GitHub")
     run.live = list_open_issues()
@@ -684,9 +646,6 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
-    seed = sub.add_parser("seed", help="build the initial state from archive/2026-04")
-    seed.add_argument("--force", action="store_true", help="overwrite existing state")
-    seed.set_defaults(func=cmd_seed)
     run = sub.add_parser("run", help="sync, assess, rank and write TOP.md")
     run.add_argument("--assess-cap", type=int, help="new or changed issues to assess")
     run.add_argument("--refresh-cap", type=int, help="shortlisted issues to re-assess")
